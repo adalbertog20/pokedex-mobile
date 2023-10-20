@@ -1,36 +1,22 @@
-import { Image, View, Text, Dimensions, StyleSheet, Alert } from "react-native";
+import { Image, View, Text, Dimensions, StyleSheet, Alert, useAnimatedValue } from "react-native";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { addToFavorites, removeFromFavorites } from "../../slice/favSlice";
 import Icon from "@expo/vector-icons/MaterialIcons";
+import useApi from "../../hooks/useApi";
 
 const PokemonDetails = ({ route }) => {
   const dispatch = useDispatch();
-  const [pokemon, setPokemon] = useState([]);
   const [pokemonTypes, setPokemonTypes] = useState([]);
-  const [color, setColor] = useState("#ffffff");
-  const fetchPokemonInfo = async () => {
-    axios
-      .get(`https://pokeapi.co/api/v2/pokemon/${route.params.name}/`)
-      .then((response) => {
-        setPokemon(response.data);
-      })
-      .catch((error) => console.error(error));
-  };
-  const fetchColor = () => {
-    axios
-      .get(`https://pokeapi.co/api/v2/pokemon-species/${route.params.name}`)
-      .then((response) => {
-        setColor(response.data.color.name);
-        console.log(color);
-      })
-      .catch((error) => console.error(error));
-  };
+
+  const {data: pokemon, loading: loadingPokemon, error: errorPokemon, refresh: refreshPokemon } = useApi(`pokemon/${route.params.name}`);
+  const {data: color, loading: loadingColor, error: errorColor, refresh: refreshColor } = useApi(`pokemon-species/${route.params.name}`);
+
   useEffect(() => {
-    fetchPokemonInfo();
-    fetchColor();
-  }, [route.params.id]);
+    refreshPokemon();
+    refreshColor();
+  }, []);
 
   const handleFavorites = (pokemon) => {
     Alert.alert("added to fav");
@@ -38,7 +24,7 @@ const PokemonDetails = ({ route }) => {
   };
 
   return (
-    <View style={{ backgroundColor: color, flex: 1 }}>
+    <View style={{ backgroundColor: color?.color.name, flex: 1 }}>
       {pokemon && (
         <View>
           <View>
