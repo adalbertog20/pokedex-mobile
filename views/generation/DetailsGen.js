@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, Button } from "react-native";
 import axios from "axios";
-import Types from "../components/Types";
-import PokemonList from "../components/PokemonList";
+import Types from "../../components/Types";
+import PokemonList from "../../components/pokemon/PokemonList";
 
 function DetailsGen({ route }) {
   const name = route.params.name;

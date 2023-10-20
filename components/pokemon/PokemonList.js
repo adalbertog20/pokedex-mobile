@@ -1,6 +1,5 @@
 import { View, Text, FlatList, Image, StyleSheet } from "react-native";
 import React, { useState, useEffect } from "react";
-import { useApi } from "../useApi";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
 
@@ -31,7 +30,14 @@ const PokemonList = (props) => {
   const renderItem = ({ item }) => (
     <View style={styles.container}>
       <Image source={{ uri: item.iconUrl }} style={{ width: 50, height: 50 }} />
-      <Text onPress={() => navigation.navigate("PokemonDetails", { name: item.name })} style={styles.name}>{item.name}</Text>
+      <Text
+        onPress={() =>
+          navigation.navigate("PokemonDetails", { name: item.name })
+        }
+        style={styles.name}
+      >
+        {item.name}
+      </Text>
     </View>
   );
 

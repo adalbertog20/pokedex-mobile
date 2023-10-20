@@ -4,13 +4,18 @@ import {
   FlatList,
   StyleSheet,
   TouchableOpacity,
+  Pressable,
+  Button,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useApi } from "../useApi";
-import GenCard from "../components/GenCard";
+import GenCard from "../components/generation/GenCard";
 import SearchBar from "../components/SearchBar";
+import Favorites from "./favorites/Favorites";
+import { useNavigation } from "@react-navigation/native";
 
 const Home = () => {
+  const navigation = useNavigation();
   const [genInfo, setGenInfo] = useState();
 
   const fetchInfo = async () => {
@@ -25,6 +30,10 @@ const Home = () => {
       <View>
         <SearchBar />
       </View>
+      <Button
+        onPress={() => navigation.navigate("Favorites")}
+        title="Go To Favorites"
+      />
       <FlatList
         data={genInfo}
         keyExtractor={(item) => item.name}
