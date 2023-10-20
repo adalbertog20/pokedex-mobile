@@ -8,7 +8,7 @@ import {
   Button,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { useApi } from "../useApi";
+import useApi from "../hooks/useApi";
 import GenCard from "../components/generation/GenCard";
 import SearchBar from "../components/SearchBar";
 import Favorites from "./favorites/Favorites";
@@ -16,15 +16,18 @@ import { useNavigation } from "@react-navigation/native";
 
 const Home = () => {
   const navigation = useNavigation();
-  const [genInfo, setGenInfo] = useState();
 
-  const fetchInfo = async () => {
-    const response = await useApi("generation/");
-    setGenInfo(response.data.results);
-  };
+  const {
+    data: genInfo,
+    loading: loadingGenInfo,
+    error: errorGenInfo,
+    refresh: refreshGenInfo,
+  } = useApi("generation/");
+
   useEffect(() => {
-    fetchInfo();
+    refreshGenInfo();
   }, []);
+
   return (
     <View>
       <View>
@@ -34,11 +37,18 @@ const Home = () => {
         onPress={() => navigation.navigate("Favorites")}
         title="Go To Favorites"
       />
+      {errorGenInfo && <Text>Error: {error.message}</Text>}
+      {loadingGenInfo && (
+        <View>
+          <Text>Is Loading</Text>
+        </View>
+      )}
       <FlatList
-        data={genInfo}
+        data={genInfo?.results}
         keyExtractor={(item) => item.name}
         renderItem={({ item }) => <GenCard name={item.name} url={item.url} />}
       />
+      <Button title="Refresh" onPress={refreshGenInfo} />
     </View>
   );
 };
