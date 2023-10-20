@@ -1,57 +1,76 @@
-import { Image, View, Text, Dimensions, StyleSheet, Alert, useAnimatedValue } from "react-native";
+import {
+  Image,
+  View,
+  Text,
+  StyleSheet,
+  Touchable,
+  TouchableOpacity,
+} from "react-native";
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { useDispatch } from "react-redux";
-import { addToFavorites, removeFromFavorites } from "../../slice/favSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { addToFavorites } from "../../slice/favSlice";
 import Icon from "@expo/vector-icons/MaterialIcons";
 import useApi from "../../hooks/useApi";
 
 const PokemonDetails = ({ route }) => {
   const dispatch = useDispatch();
-  const [pokemonTypes, setPokemonTypes] = useState([]);
+  const [tapCount, setTapCount] = useState(0);
+  const favorites = useSelector((state) => state.favorites.favorites);
 
-  const {data: pokemon, loading: loadingPokemon, error: errorPokemon, refresh: refreshPokemon } = useApi(`pokemon/${route.params.name}`);
-  const {data: color, loading: loadingColor, error: errorColor, refresh: refreshColor } = useApi(`pokemon-species/${route.params.name}`);
+  const {
+    data: pokemon,
+    loading: loadingPokemon,
+    error: errorPokemon,
+    refresh: refreshPokemon,
+  } = useApi(`pokemon/${route.params.name}`);
+  const {
+    data: color,
+    loading: loadingColor,
+    error: errorColor,
+    refresh: refreshColor,
+  } = useApi(`pokemon-species/${route.params.name}`);
+
+  const handleDoubleTap = () => {
+    if (tapCount === 1 && pokemon) {
+      dispatch(
+        addToFavorites({ id: String(pokemon.id), name: String(pokemon.name) })
+      );
+      setTapCount(0);
+    } else {
+      setTapCount(1);
+      setTimeout(() => {
+        setTapCount(0);
+      }, 300);
+    }
+  };
 
   useEffect(() => {
     refreshPokemon();
     refreshColor();
-  }, []);
-
-  const handleFavorites = (pokemon) => {
-    Alert.alert("added to fav");
-    useDispatch(addToFavorites({ id: pokemon.id, name: pokemon.name }));
-  };
+    console.log('uploaded ', favorites)
+  }, [favorites]);
 
   return (
     <View style={{ backgroundColor: color?.color.name, flex: 1 }}>
       {pokemon && (
-        <View>
+        <TouchableOpacity
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          onPress={handleDoubleTap}
+        >
           <View>
-            <View style={styles.topContainer}>
-              <Text style={styles.name}>{pokemon.name}</Text>
-              <Icon
-                onPress={() =>
-                  dispatch(
-                    addToFavorites({
-                      id: String(pokemon.id),
-                      name: String(pokemon.name),
-                    })
-                  )
-                }
-                name="favorite"
-                size={50}
-                style={styles.icon}
+            <View>
+              <View style={styles.topContainer}>
+                <Text style={styles.name}>{pokemon.name}</Text>
+              </View>
+              <Image
+                source={{
+                  uri: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`,
+                }}
+                style={{ width: "100%", height: "95%", resizeMode: "contain" }}
               />
             </View>
-            <Image
-              source={{
-                uri: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`,
-              }}
-              style={{ width: "100%", height: "95%", resizeMode: "contain" }}
-            />
           </View>
-        </View>
+        </TouchableOpacity>
       )}
     </View>
   );
