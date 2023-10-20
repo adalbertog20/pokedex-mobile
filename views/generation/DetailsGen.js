@@ -26,9 +26,6 @@ function DetailsGen({ route }) {
   }, []);
   return (
     <View>
-      <Text>{id}</Text>
-      {genInfo && <Text>{genInfo.main_region.name}</Text>}
-      <Text>Types</Text>
       <Button title="Show Types" onPress={() => setShowTypes(!showTypes)}/>
       {genInfo && showTypes && <Types info={genInfo.types} />}
       <PokemonList id={id}/>

@@ -3,13 +3,11 @@ import {
   View,
   Text,
   StyleSheet,
-  Touchable,
   TouchableOpacity,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addToFavorites } from "../../slice/favSlice";
-import Icon from "@expo/vector-icons/MaterialIcons";
 import useApi from "../../hooks/useApi";
 
 const PokemonDetails = ({ route }) => {
@@ -32,6 +30,7 @@ const PokemonDetails = ({ route }) => {
 
   const handleDoubleTap = () => {
     if (tapCount === 1 && pokemon) {
+      console.log("papu");
       dispatch(
         addToFavorites({ id: String(pokemon.id), name: String(pokemon.name) })
       );

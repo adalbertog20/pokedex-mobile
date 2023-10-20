@@ -1,4 +1,11 @@
-import { View, Text, FlatList, Image, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  Image,
+  StyleSheet,
+  Pressable,
+} from "react-native";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
@@ -29,15 +36,21 @@ const PokemonList = (props) => {
 
   const renderItem = ({ item }) => (
     <View style={styles.container}>
-      <Image source={{ uri: item.iconUrl }} style={{ width: 50, height: 50 }} />
-      <Text
+      <Pressable
         onPress={() =>
           navigation.navigate("PokemonDetails", { name: item.name })
         }
-        style={styles.name}
       >
-        {item.name}
-      </Text>
+        <View>
+          <Image
+            source={{ uri: item.iconUrl }}
+            style={{ width: 50, height: 50 }}
+          />
+        </View>
+        <View>
+          <Text style={styles.name}>{item.name}</Text>
+        </View>
+      </Pressable>
     </View>
   );
 
@@ -46,6 +59,7 @@ const PokemonList = (props) => {
       <FlatList
         data={pokemonData}
         keyExtractor={(item) => item.name}
+        numColumns={2}
         renderItem={renderItem}
       />
     </View>
@@ -55,10 +69,14 @@ const PokemonList = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: "row",
-    justifyContent: "center",
+    margin: 8,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: "gray",
+    borderRadius: 4,
+    flexDirection: "col",
     alignItems: "center",
-    margin: 20,
+    justifyContent: "center",
   },
   name: {
     fontSize: 24,

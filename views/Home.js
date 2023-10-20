@@ -46,6 +46,7 @@ const Home = () => {
       <FlatList
         data={genInfo?.results}
         keyExtractor={(item) => item.name}
+        numColumns={2}
         renderItem={({ item }) => <GenCard name={item.name} url={item.url} />}
       />
       <Button title="Refresh" onPress={refreshGenInfo} />
